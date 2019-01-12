@@ -35,7 +35,7 @@ xhr.send();
 function onLoad() {
     let book = JSON.parse(xhr.responseText);
     let container = document.getElementById("content");
-    container.innerHTML -= `<li data-title data-author data-info data-price> <img src = ''></li>`;
+    container.innerHTML = ``;
     for (let i = 0; i < book.length; i++) {
         container.innerHTML += `<li data-title data-author data-info data-price> <img src = ''></li>`;
         const bookList = document.querySelectorAll('ul#content li');
@@ -47,4 +47,3 @@ function onLoad() {
         imges[i].src = book[i].cover.small;
     };
 };
-
