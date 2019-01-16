@@ -64,7 +64,6 @@ function logEvent(event) {
 
 //////////////////////////////////////////TEEEEEEESSSSSSSSSSTTTTTTTTTTTT////////////////////////////////////////
 const AllOutput = document.querySelectorAll("#output output"); //тут собраны output в которые нужно добавить value
-//const nameField = document.getElementsByTagName("input");//тут инпуты из которых нужно брать значение name.value
 
 
 form[0].addEventListener("change", showMessage);
@@ -76,7 +75,7 @@ function showMessage() {
     }
   }
 
-  if (container.length >= 3) {
+  if (container.length === 3) {
     buttonContact[0].removeAttribute("disabled");
   } else {
     container.length = 0;
@@ -84,4 +83,10 @@ function showMessage() {
   }
 }
 
+// //AllOutput.forEach(output => {console.log(output.id)})
 
+for (let i = 0; i < nameField.length; i++) {
+  if (nameField[i].name === AllOutput[i].id) {
+    AllOutput[i].value = nameField[i].value;
+  }
+}
