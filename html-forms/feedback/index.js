@@ -1,92 +1,54 @@
 "use strict";
+const form = document.querySelector(".contentform");
+const buttonContact = document.querySelector("main button");
+const formButton = document.querySelector(`[type="submit"]`);
+const AllOutput = document.querySelector("#output");
+const data = document.querySelectorAll("input, textarea");
 
-const form = document.getElementsByClassName("contentform");
-const buttonContact = document.getElementsByClassName("button-contact");
-const output = document.getElementById("output");
-const nameField = document.getElementsByTagName("input");
-const name = document.getElementsByTagName("name");
-
-/////////////////////////////////////////////////
-
-// form[0].addEventListener("change", showMessage);
-// function showMessage() {
-//   let container = [];
-//   for (let i = 0; i < nameField.length; i++) {
-//     if (nameField[i].value) {
-//       container.push(nameField[i].value);
-//       console.log(nameField[i].value)
-//     }
-//   }
-//   if (container.length === 3) {
-//     buttonContact[0].removeAttribute("disabled");
-//   } else {
-//     container.length = 0;
-//     buttonContact[0].setAttribute("disabled", "");
-//   }
-// }
-
-///////////////////////////////////////////////////////
-form[0].addEventListener("input", indexHome);
+form.addEventListener("input", showMessage);
+function showMessage() {
+  let container = [];
+  for (let i = 0; i < data.length; i++) {
+    if (data[i].value) {
+      container.push(data[i].value);
+    };
+  };
+  if (container.length === data.length) {
+    formButton.removeAttribute("disabled");
+  } else {
+    container.length = 0;
+    formButton.setAttribute("disabled", "");
+  };
+};
+form.addEventListener("input", indexHome);
 function indexHome() {
-  const index = document.querySelectorAll('[name="zip"]');
-  let IndexValue = index[0].value;
+  const index = document.querySelector('[name="zip"]');
+  let IndexValue = index.value;
   const number = /\d/;
   for (let numbers of IndexValue) {
     if (!number.test(numbers)) {
-      index[0].value = "";
-    }
-  }
-}
+      index.value = "";
+    };
+  };
+};
+buttonContact.addEventListener("click", showMessages);
+formButton.addEventListener("click", showMessages);
 
-///////////////////////////////////////////////////////////
-// for (const button of buttonContact) {
-//     button.addEventListener('click', showMessages);
-// };
-
-buttonContact[0].addEventListener("click", showMessages);
 function showMessages(event) {
   event.preventDefault();
-  const tagName = event.currentTarget.tagName;
-  if (tagName) {
-    form[0].classList.add("hidden");
-    output.classList.remove("hidden");
-  }
-}
-//////////////////////////////////////////////////////
-buttonContact[1].addEventListener("click", logEvent);
-function logEvent(event) {
   const tagName = event.currentTarget;
-  if (tagName) {
-    form[0].classList.remove("hidden");
-    output.classList.add("hidden");
+  if (tagName === formButton) {
+    form.classList.add("hidden");
+    AllOutput.classList.remove("hidden");
   }
-}
-
-//////////////////////////////////////////TEEEEEEESSSSSSSSSSTTTTTTTTTTTT////////////////////////////////////////
-const AllOutput = document.querySelectorAll("#output output"); //тут собраны output в которые нужно добавить value
-
-
-form[0].addEventListener("change", showMessage);
-function showMessage() {
-  let container = [];
-  for (let i = 0; i < nameField.length; i++) {
-    if (nameField[i].value) {
-      container.push(nameField[i].value);
+  else if (tagName === buttonContact) {
+    form.classList.remove("hidden");
+    AllOutput.classList.add("hidden");
+  }
+  data.forEach(el => {
+    const elem = AllOutput.querySelector(`#${el.name}`);
+    if (elem) {
+      elem.textContent = el.value;
     }
-  }
-
-  if (container.length === 3) {
-    buttonContact[0].removeAttribute("disabled");
-  } else {
-    container.length = 0;
-    buttonContact[0].setAttribute("disabled", "");
-  }
-}
-
-// //AllOutput.forEach(output => {console.log(output.id)})
-
-for (let i = 0; i < nameField.length; i++) {
-  if (nameField[i].name === AllOutput[i].id) {
-    AllOutput[i].value = nameField[i].value;
-  }
-}
+  });
+};
