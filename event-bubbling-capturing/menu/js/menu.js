@@ -11,6 +11,8 @@ function toggleMenu(event) {
 }
 
 function openLink(event) {
+  event.preventDefault();
+  event.stopPropagation(); 
   console.log(this.textContent);
 }
 
@@ -19,6 +21,7 @@ function init(node) {
 }
 
 function initLink(node) {
+
   if (node.dataset.toggle) {
     return;
   }
@@ -32,3 +35,4 @@ Array
 Array
   .from(document.querySelectorAll('a'))
   .forEach(initLink);
+//////////////////////////////////////
