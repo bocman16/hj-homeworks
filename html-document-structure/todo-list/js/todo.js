@@ -8,12 +8,9 @@ for (const button of doneAll) {
 };
 function itIsDone(event) {
     const tagNameParent = event.target.parentElement;
-    const tagName = event.target;
-    if (tagName.hasAttribute('checked')) {
-        tagName.removeAttribute('checked');
-        undone.appendChild(tagNameParent);
-    } else {
-        tagName.setAttribute('checked', '')
+    if (event.target.checked) {
         done.appendChild(tagNameParent);
+    } else {
+        undone.appendChild(tagNameParent);
     };
 };
