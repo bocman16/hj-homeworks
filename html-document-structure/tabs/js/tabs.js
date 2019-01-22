@@ -23,7 +23,6 @@ for (const button of btns) {
 
 function logEvent(event) {
   tagName = event.target;
-  const liCloneA = tabs.querySelectorAll("a");
   for (let i = 0; i < btns.length; i++) {
     btns[i].classList.remove("ui-tabs-active");
     tabsContent[i].classList.add("hidden");
