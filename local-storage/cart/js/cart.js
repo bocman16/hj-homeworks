@@ -18,9 +18,7 @@ function handleSubmitForm() {
             fetch('https://neto-api.herokuapp.com/cart/colors'),
             fetch('https://neto-api.herokuapp.com/cart/sizes'),
             fetch('https://neto-api.herokuapp.com/cart')
-        ]) // ]).then((data) => {
-        //     data.json()
-        // })
+        ])
         .then(([res1, res2, res3]) => {
             res1.json(), res2.json(), res3.json()
         .then((data) => {
@@ -31,3 +29,13 @@ function handleSubmitForm() {
         })
     })
 }
+function loadData(url, callBack) {
+    fetch(url)
+      .then(res => res.json())
+      .then(res => callBack(res))
+      .catch(error => console.log(error))
+  }
+  Promise.all([
+    loadData(url.color, loadColors),
+    loadData(url.size, loadSizes),
+]);

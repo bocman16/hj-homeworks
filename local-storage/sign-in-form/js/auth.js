@@ -74,6 +74,9 @@ const forms = document.querySelectorAll('form');
 
 
 
+
+
+
 // async/await
 
 // const loadData = async (url, data, paramsForm) => {
