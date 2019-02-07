@@ -1,5 +1,4 @@
 "use strict";
-
 const loadData = (data, url, registr) => {
     const output = document.querySelectorAll('output');
     fetch(url, {
@@ -21,14 +20,13 @@ const loadData = (data, url, registr) => {
         })
         .catch(error => console.log(error))
 };
-const getFormData = (form, url, registr) => {
-    let registrName = registr;
+const getFormData = form => {
     const formData = new FormData(form);
     const newFormData = {};
     for (const [key, value] of formData) {
         newFormData[key] = value;
     }
-    loadData(newFormData, url, registrName)
+   return newFormData
 };
 
 const handleSubmitForm = evt => {
@@ -44,7 +42,7 @@ const handleSubmitForm = evt => {
         url = 'https://neto-api.herokuapp.com/signup'
         registr = 'зарегистрирован';
     }
-    getFormData(form, url, registr);
+    loadData(getFormData(form), url, registr);
 }
 
 const forms = document.querySelectorAll('form');
