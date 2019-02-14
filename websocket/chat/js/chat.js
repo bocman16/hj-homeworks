@@ -37,18 +37,19 @@ connection.addEventListener("message", event => {
   const time = divClone.querySelector(".timestamp");
   time.textContent = `${hours}:${minutes}`;
   messagesContent.appendChild(divClone);
-  text.scrollIntoView(top);
-  if (event.data === "...") {
-    messagesContent.appendChild(divMessage[0]);
-    text.textContent = "собеседник сейчас печатает сообщение";
-  } else {
+  text.scrollIntoView(top);//МОЖНО УБРАТЬ
+  if (!(event.data === "...")) {
+    text.textContent = event.data;
     const remomeDiv = messagesContent.querySelectorAll(".loading");
     if (remomeDiv.length >= 1) {
       messagesContent.removeChild(divMessage[0]);
     }
-    text.textContent = event.data;
+  } else {
+    messagesContent.appendChild(divMessage[0]);
+    text.textContent = "собеседник сейчас печатает сообщение";
   }
 });
+
 const handleSubmitForm = evt => {
   evt.preventDefault();
   const now = new Date();
@@ -63,7 +64,7 @@ const handleSubmitForm = evt => {
   messagText.textContent = messageInput.value;
   const div = messagePersonal.cloneNode(true);
   messagesContent.appendChild(div);
-  div.scrollIntoView(top);
+  div.scrollIntoView(top);//МОЖНО УБРАТЬ
   messageInput.value = "";
 };
 
