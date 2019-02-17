@@ -2,20 +2,13 @@
 
 function userValue(data) {
   const container = document.querySelector(".container");
-  const wallpaper = container.querySelector("[data-wallpaper]");
-  const username = container.querySelector("[data-username]");
-  const description = container.querySelector("[data-description]");
-  const pic = container.querySelector("[data-pic]");
-  const tweets = container.querySelector("[data-tweets]");
-  const followers = container.querySelector("[data-followers]");
-  const following = container.querySelector("[data-following]");
-  wallpaper.src = data.wallpaper;
-  username.textContent = data.username;
-  description.textContent = data.description;
-  pic.src = data.pic;
-  tweets.textContent = data.tweets;
-  followers.textContent = data.followers;
-  following.textContent = data.following;
+  container.querySelector("[data-wallpaper]").src = data.wallpaper;
+  container.querySelector("[data-username]").textContent = data.username;
+  container.querySelector("[data-description]").textContent = data.description;
+  container.querySelector("[data-pic]").src = data.pic;
+  container.querySelector("[data-tweets]").textContent = data.tweets;
+  container.querySelector("[data-followers]").textContent = data.followers;
+  container.querySelector("[data-following]").textContent = data.following;
 }
 
 function randName() {
