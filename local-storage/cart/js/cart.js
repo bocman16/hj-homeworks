@@ -3,10 +3,10 @@ const cartSnippet = document.getElementById("quick-cart");
 
 addItem.addEventListener("submit", addItemToCart);
 document.addEventListener("click", removeItemFromCart);
-document.addEventListener("click", updateLocalStorage);
 
 const baseUrl = "https://neto-api.herokuapp.com";
 const getUrl = url => `${baseUrl}${url}`;
+
 const url = {
   color: getUrl("/cart/colors"),
   size: getUrl("/cart/sizes"),
@@ -21,10 +21,11 @@ function loadData(url, callBack) {
     .catch(error => console.log(error));
 }
 
-Promise.all([loadData(url.color, loadColors), loadData(url.size, loadSizes)]);
+Promise.all([loadData(url.color, loadColors), loadData(url.size, loadSizes), loadData(url.cart, updateCart)]);
 
 function loadColors(response) {
   const colorSnippet = document.getElementById("colorSwatch");
+
   for (let color of response) {
     colorSnippet.insertAdjacentHTML(
       "beforeend",
@@ -85,12 +86,12 @@ function loadSizes(response) {
     }
   }
 }
-
+//////////////////////////////////////////////////////
 function sendCart(url, data) {
   return fetch(url, {
-    method: "POST",
-    body: data
-  })
+      method: "POST",
+      body: data
+    })
     .then(res => res.json())
     .then(res => {
       return res;
@@ -98,6 +99,7 @@ function sendCart(url, data) {
     .catch(error => console.log(error));
 }
 
+/////////////////////////////////////////////////////////
 function updateCart(cart) {
   if (cart.length === 0) {
     cartSnippet.innerHTML = "";
@@ -124,9 +126,8 @@ function updateCart(cart) {
 </span>
 </a>`
   );
-};
-
-
+}
+//////////////////////////////////////////////////
 function addItemToCart() {
   event.preventDefault();
   const id = event.currentTarget.dataset.productId;
@@ -136,7 +137,7 @@ function addItemToCart() {
     updateCart(response);
   });
 }
-
+/////////////////////////////////////////////
 function removeItemFromCart() {
   if (!event.target.classList.contains("remove")) {
     return;
@@ -146,11 +147,4 @@ function removeItemFromCart() {
   sendCart(url.removeCart, formData).then(response => {
     updateCart(response);
   });
-}
-
-function updateLocalStorage() {
-  if (event.target.type !== "radio") {
-    return;
-  }
-  localStorage.setItem(`${event.target.name}`, `${event.target.value}`);
 }
