@@ -21,7 +21,10 @@ function loadData(url, callBack) {
     .catch(error => console.log(error));
 }
 
-Promise.all([loadData(url.color, loadColors), loadData(url.size, loadSizes), loadData(url.cart, updateCart)]);
+Promise.all([loadData(url.color, loadColors),
+  loadData(url.size, loadSizes),
+  loadData(url.cart, updateCart)
+]);
 
 function loadColors(response) {
   const colorSnippet = document.getElementById("colorSwatch");
