@@ -1,16 +1,40 @@
-"use strict";
+const addItem = document.querySelector("#AddToCartForm");
+const cartSnippet = document.getElementById("quick-cart");
 
-function loadColors(callBack) {
-  const colorSnippet = document.querySelector("#colorSwatch");
-  for (let color of callBack) {
+addItem.addEventListener("submit", addItemToCart);
+document.addEventListener("click", removeItemFromCart);
+document.addEventListener("click", updateLocalStorage);
+
+const baseUrl = "https://neto-api.herokuapp.com";
+const getUrl = url => `${baseUrl}${url}`;
+const url = {
+  color: getUrl("/cart/colors"),
+  size: getUrl("/cart/sizes"),
+  cart: getUrl("/cart"),
+  removeCart: getUrl("/cart/remove")
+};
+
+function loadData(url, callBack) {
+  fetch(url)
+    .then(res => res.json())
+    .then(res => callBack(res))
+    .catch(error => console.log(error));
+}
+
+Promise.all([loadData(url.color, loadColors), loadData(url.size, loadSizes)]);
+
+function loadColors(response) {
+  const colorSnippet = document.getElementById("colorSwatch");
+  for (let color of response) {
     colorSnippet.insertAdjacentHTML(
       "beforeend",
       `<div data-value="${color.type}" class="swatch-element color ${
         color.type
       }">
-  <div class="tooltip">${color.title}</div> <input quickbeam="color" id="${
-        color.type
-      }" type="radio" name="color" value="${color.type}">
+  <div class="tooltip">${color.title}</div>
+  <input quickbeam="color" id="${
+    color.type
+  }" type="radio" name="color" value="${color.type}">
   <label for="${color.type}" style="border-color: red;">
     <span style="background-color: ${color.code};"></span>
     <img class="crossed-out" src="https://neto-api.herokuapp.com/hj/3.3/cart/soldout.png?10994296540668815886">
@@ -24,18 +48,18 @@ function loadColors(callBack) {
       colorSnippet.lastElementChild.classList.add("soldout");
     } else {
       colorSnippet.lastElementChild.classList.add("available");
+      let newElement = colorSnippet.lastElementChild;
+      let colorRadio = newElement.querySelector("input");
+      if (colorRadio.value === localStorage.color) {
+        colorRadio.checked = true;
+      }
     }
   }
-  const div = colorSnippet.querySelector(`div`)
-  let colorRadio = colorSnippet.querySelector("input");
-  if(div.classList.contains('available')){
-    colorRadio.setAttribute('checked', '')
-  }else{ colorRadio.removeAttribute('checked') }
 }
 
-function loadSizes(callBack) {
+function loadSizes(response) {
   const sizeSnippet = document.getElementById("sizeSwatch");
-  for (let size of callBack) {
+  for (let size of response) {
     sizeSnippet.insertAdjacentHTML(
       "beforeend",
       `<div data-value="${size.type}" class="swatch-element ${
@@ -51,99 +75,82 @@ function loadSizes(callBack) {
     if (size.isAvailable === false) {
       let thisInput = sizeSnippet.lastElementChild.querySelector("input");
       thisInput.disabled = true;
-      sizeSnippet.lastElementChild.classList.add("soldout"); 
+      sizeSnippet.lastElementChild.classList.add("soldout");
     } else {
       sizeSnippet.lastElementChild.classList.add("available");
+      let newElement = sizeSnippet.lastElementChild;
+      if (newElement.firstElementChild.value === localStorage.size) {
+        newElement.firstElementChild.checked = true;
+      }
     }
   }
-  const div = sizeSnippet.querySelector('div')
-  let input = sizeSnippet.querySelector('input');
-  if(div.classList.contains('available')){
-    input.setAttribute('checked', '')
-  }else{ input.removeAttribute('checked') }
 }
 
-function loadData(url, callBack) {
-  fetch(url)
+function sendCart(url, data) {
+  return fetch(url, {
+    method: "POST",
+    body: data
+  })
     .then(res => res.json())
-    .then(res => callBack(res))
+    .then(res => {
+      return res;
+    })
     .catch(error => console.log(error));
 }
 
-Promise.all([
-  loadData("https://neto-api.herokuapp.com/cart/colors", loadColors),
-  loadData("https://neto-api.herokuapp.com/cart/sizes", loadSizes)
-]);
-
-const loadCart = cart => {
-  console.log(cart);
-  const quickCart = document.querySelector("#quick-cart");
-  const quantity = cart[0].quantity ? cart[0].quantity : 1;
+function updateCart(cart) {
   if (cart.length === 0) {
-    quickCart.innerHTML = "";
+    cartSnippet.innerHTML = "";
     return;
   }
-  let sum = quantity * cart[0].price;
-  quickCart.innerHTML = "";
-  quickCart.insertAdjacentHTML(
+  let sum = cart[0].quantity * cart[0].price;
+  cartSnippet.innerHTML = "";
+  cartSnippet.insertAdjacentHTML(
     "beforeend",
     `<div class="quick-cart-product quick-cart-product-static" id="${
       cart[0].id
     }" style="opacity: 1;">
-<div class="quick-cart-product-wrap"><img src="${cart[0].pic}" title="${
-      cart[0].title
-    }">
-  <span class="s1" style="background-color: #000; opacity: .5">${sum}</span><span class="s2"></span>
-</div>
-<span class="count hide fadeUp" id="${cart[0].id}">${quantity}</span>
-<span class="quick-cart-product-remove remove" data-id="${cart[0].id}"></span>
-</div>`)
-  quickCart.insertAdjacentHTML("beforeend", `<a id="quick-cart-pay" quickbeam="cart-pay" class="cart-ico open">
- <span>
-   <strong class="quick-cart-text">Оформить заказ<br></strong>
-   <span id="quick-cart-price">$${sum}</span>
- </span>
-</a>`);
-  const remove = document.querySelector(".remove");
-  remove.addEventListener("click", handleSubmitForm);
+  <div class="quick-cart-product-wrap">
+    <img src="${cart[0].pic}" title="${cart[0].title}">
+    <span class="s1" style="background-color: #000; opacity: .5">${sum}</span>
+    <span class="s2"></span>
+  </div>
+  <span class="count hide fadeUp" id="${cart[0].id}">${cart[0].quantity}</span>
+  <span class="quick-cart-product-remove remove" data-id="${cart[0].id}"></span>
+</div><a id="quick-cart-pay" quickbeam="cart-pay" class="cart-ico open">
+<span>
+  <strong class="quick-cart-text">Оформить заказ<br></strong>
+  <span id="quick-cart-price">$${sum}</span>
+</span>
+</a>`
+  );
 };
 
-const sendRequest = (data, url) => {
-  fetch(url, {
-      body: data,
-      method: "POST"
-    })
-    .then(res => res.json())
-    .then(res => loadCart(res))
-    .catch(error => console.log(error));
-};
 
-/////////
-const getFormData = form => {
-  let id = form.dataset.productId;
-  const formData = new FormData(form);
+function addItemToCart() {
+  event.preventDefault();
+  const id = event.currentTarget.dataset.productId;
+  const formData = new FormData(event.currentTarget);
   formData.append("productId", id);
-  return formData;
-};
+  sendCart(url.cart, formData).then(response => {
+    updateCart(response);
+  });
+}
 
-const handleSubmitForm = evt => {
-  evt.preventDefault();
-  const form = evt.currentTarget
-  let url = `https://neto-api.herokuapp.com/cart`;
-  if (evt.target.classList.contains("remove")) {
-    url = `https://neto-api.herokuapp.com/cart/remove`;
-  }
-  sendRequest(getFormData(form), url);
-};
-const AddToCartForm = document.querySelector("#AddToCartForm");
-AddToCartForm.addEventListener("submit", handleSubmitForm);
-
-//////////////////
-const updateLocalStorage = evt => {
-  if (evt.target.type !== "radio") {
+function removeItemFromCart() {
+  if (!event.target.classList.contains("remove")) {
     return;
   }
-  localStorage.setItem(`${evt.target.name}`, `${evt.target.value}`);
-};
+  const formData = new FormData();
+  formData.append("productId", event.target.dataset.id);
+  sendCart(url.removeCart, formData).then(response => {
+    updateCart(response);
+  });
+}
 
-document.addEventListener("click", updateLocalStorage);
+function updateLocalStorage() {
+  if (event.target.type !== "radio") {
+    return;
+  }
+  localStorage.setItem(`${event.target.name}`, `${event.target.value}`);
+}
