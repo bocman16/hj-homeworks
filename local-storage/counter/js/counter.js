@@ -2,6 +2,8 @@
 
 const counter = document.querySelector("#counter");
 const button = document.querySelectorAll(".wrap-btns");
+const increment = document.querySelector("#increment");
+const decrement = document.querySelector("#decrement");
 counter.textContent = localStorage.counterData || "0";
 
 for (let click of button) {
@@ -9,8 +11,6 @@ for (let click of button) {
 }
 
 function count(event) {
-  const increment = document.querySelector("#increment");
-  const decrement = document.querySelector("#decrement");
   if (event.target === increment) {
     counter.textContent++;
   } else if (event.target === decrement && counter.textContent > 0) {
