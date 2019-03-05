@@ -1,18 +1,16 @@
-'use strict';
+"use strict";
 
-const wall = document.getElementById('wall');
-const ctx = wall.getContext('2d');
-const wallW = window.innerWidth;
-const wallH = window.innerHeight;
+const wall = document.getElementById("wall"),
+  ctx = wall.getContext("2d"),
+  wallW = window.innerWidth,
+  wallH = window.innerHeight,
+  figureCount = Math.floor(Math.random() * 1000 + 1),
+  figures = [],
+  PI = Math.PI,
+  FPS = 20;
 
-const figureCount = Math.floor((Math.random() * 1000) + 1);
-const figures = [];
-
-const PI = Math.PI;
-const FPS = 20;
-
-wall.setAttribute('width', wallW);
-wall.setAttribute('height', wallH);
+wall.setAttribute("width", wallW);
+wall.setAttribute("height", wallH);
 
 class Figure {
   constructor() {
@@ -21,20 +19,20 @@ class Figure {
     this.newX = 0;
     this.newY = 0;
     this.size = randomNumber(0.1, 0.6, true);
-    this.color = '#ffffff';
+    this.color = "#ffffff";
     this.strokeWidth = 5 * this.size;
-    this.isRandomNewPoint = (figureCount / 2) < randomNumber(0, figureCount);
+    this.isRandomNewPoint = figureCount / 2 < randomNumber(0, figureCount);
   }
 
   newPoint() {
     const time = Date.now();
 
     if (this.isRandomNextPoint) {
-      this.newX = this.x + Math.sin((50 + this.x + (time / 10)) / 100) * 3;
-      this.newY = this.y + Math.sin((45 + this.x + (time / 10)) / 100) * 4;
+      this.newX = this.x + Math.sin((50 + this.x + time / 10) / 100) * 3;
+      this.newY = this.y + Math.sin((45 + this.x + time / 10) / 100) * 4;
     } else {
-      this.newX = this.x + Math.sin((this.x + (time / 10)) / 100) * 5;
-      this.newY = this.y + Math.sin((10 + this.x + (time / 10)) / 100) * 2;
+      this.newX = this.x + Math.sin((this.x + time / 10) / 100) * 5;
+      this.newY = this.y + Math.sin((10 + this.x + time / 10) / 100) * 2;
     }
   }
 
@@ -72,7 +70,7 @@ class Tic extends Figure {
     super.draw();
     this.rotated();
     ctx.translate(this.newX, this.newY);
-    ctx.rotate(this.angel * PI / 180);
+    ctx.rotate((this.angel * PI) / 180);
     ctx.moveTo(0, 0);
     ctx.lineTo(0, -this.radius);
     ctx.moveTo(0, 0);
@@ -98,7 +96,9 @@ class Tic extends Figure {
 }
 
 function randomNumber(min, max, float = false) {
-  return float ? (min + (Math.random() * (max - min))).toFixed(1) : Math.floor(min + Math.random() * (max + 1 - min));
+  return float
+    ? (min + Math.random() * (max - min)).toFixed(1)
+    : Math.floor(min + Math.random() * (max + 1 - min));
 }
 
 function animateFigure() {
@@ -106,7 +106,7 @@ function animateFigure() {
 
   ctx.clearRect(0, 0, wallW, wallH);
 
-  figures.forEach((figure) => {
+  figures.forEach(figure => {
     figure.draw();
   });
 
@@ -115,7 +115,7 @@ function animateFigure() {
 
 function init() {
   for (let i = 0; i < figureCount; i++) {
-    const figure = (i <= figureCount / 2) ? new Tic() : new Tac();
+    const figure = i <= figureCount / 2 ? new Tic() : new Tac();
     figures.push(figure);
     figure.draw();
   }
