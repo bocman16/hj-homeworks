@@ -1,8 +1,8 @@
 "use strict";
 
-const convas = document.querySelector("#draw");
-const ctx = convas.getContext("2d");
-const PI = Math.PI;
+const convas = document.querySelector("#draw"),
+  ctx = convas.getContext("2d"),
+  PI = Math.PI;
 let draw = false; // Статус рисования
 
 ctx.lineJoin = "round";
@@ -65,7 +65,7 @@ const changeHue = () => {
 
   return event => {
     event.shiftKey ? currentHue-- : currentHue++;
-    
+
     if (currentHue < minHue) {
       currentHue = maxHue;
     }
