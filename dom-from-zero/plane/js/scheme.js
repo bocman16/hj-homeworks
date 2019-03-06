@@ -50,18 +50,24 @@ function renderMap(data) {
 
   data.scheme.forEach((item, i) => {
     const letters =
-      item === 4
-        ? [].concat("", data.letters4, "")
-        : item === 6
-        ? data.letters6
-        : [];
-    const row = elRender("div", { class: "row seating-row text-center" }, [
-      elRender("div", { class: "col-xs-1 row-number" }, [
+      item === 4 ? [].concat("", data.letters4, "") :
+      item === 6 ?
+      data.letters6 : [];
+    const row = elRender("div", {
+      class: "row seating-row text-center"
+    }, [
+      elRender("div", {
+        class: "col-xs-1 row-number"
+      }, [
         elRender("h2", null, `${i + 1}`)
       ])
     ]);
-    const colLeft = elRender("div", { class: "col-xs-5" });
-    const colRight = elRender("div", { class: "col-xs-5" });
+    const colLeft = elRender("div", {
+      class: "col-xs-5"
+    });
+    const colRight = elRender("div", {
+      class: "col-xs-5"
+    });
 
     letters.forEach((letter, i) => {
       if (i <= 2) {
@@ -81,15 +87,21 @@ function renderMap(data) {
 // Добавления места с буквой или пустое место
 function renderSeat(value) {
   if (value !== "") {
-    const seat = elRender("div", { class: "col-xs-4 seat" }, [
-      elRender("span", { class: "seat-label" }, value)
+    const seat = elRender("div", {
+      class: "col-xs-4 seat"
+    }, [
+      elRender("span", {
+        class: "seat-label"
+      }, value)
     ]);
 
     seat.addEventListener("click", checkedSingleSeat);
 
     return seat;
   } else {
-    return elRender("div", { class: "col-xs-4 no-seat" });
+    return elRender("div", {
+      class: "col-xs-4 no-seat"
+    });
   }
 }
 
@@ -99,39 +111,21 @@ function countCheckedSeat() {
 
   Array.from(seats).forEach(item => {
     if (item.classList.contains("adult") || item.classList.contains("half")) {
-      totalPax.textContent =
-        parseInt(totalPax.textContent) < seats.length
-          ? parseInt(totalPax.textContent) + 1
-          : seats.length;
+      totalPax.textContent = parseInt(totalPax.textContent) < seats.length ? parseInt(totalPax.textContent) + 1 : seats.length;
     } else {
-      totalPax.textContent =
-        parseInt(totalPax.textContent) > 0
-          ? parseInt(totalPax.textContent) - 1
-          : 0;
+      totalPax.textContent = parseInt(totalPax.textContent) > 0 ? parseInt(totalPax.textContent) - 1 : 0;
     }
 
     if (item.classList.contains("adult")) {
-      totalAdult.textContent =
-        parseInt(totalAdult.textContent) < seats.length
-          ? parseInt(totalAdult.textContent) + 1
-          : seats.length;
+      totalAdult.textContent = parseInt(totalAdult.textContent) < seats.length ? parseInt(totalAdult.textContent) + 1 : seats.length;
     } else {
-      totalAdult.textContent =
-        parseInt(totalAdult.textContent) > 0
-          ? parseInt(totalAdult.textContent) - 1
-          : 0;
+      totalAdult.textContent = parseInt(totalAdult.textContent) > 0 ? parseInt(totalAdult.textContent) - 1 : 0;
     }
 
     if (item.classList.contains("half")) {
-      totalHalf.textContent =
-        parseInt(totalHalf.textContent) < seats.length
-          ? parseInt(totalHalf.textContent) + 1
-          : seats.length;
+      totalHalf.textContent = parseInt(totalHalf.textContent) < seats.length ? parseInt(totalHalf.textContent) + 1 : seats.length;
     } else {
-      totalHalf.textContent =
-        parseInt(totalHalf.textContent) > 0
-          ? parseInt(totalHalf.textContent) - 1
-          : 0;
+      totalHalf.textContent = parseInt(totalHalf.textContent) > 0 ? parseInt(totalHalf.textContent) - 1 : 0;
     }
   });
 }
@@ -155,29 +149,28 @@ function checkedAllSeat(type) {
 }
 
 // Выбрать одно место
-function checkedSingleSeat(event) {
-  const target = event.currentTarget;
-
-  if (!target.classList.contains("adult")) {
+function checkedSingleSeat(evt) {
+  const target = evt.currentTarget;
+  if (!target.classList.contains("adult") && !target.classList.contains("half") && evt.altKey === false) {
     target.classList.add("adult");
-    totalPax.textContent = parseInt(totalPax.textContent) + 1;
-    totalAdult.textContent = parseInt(totalAdult.textContent) + 1;
-  } else {
+    totalPax.textContent++;
+    totalAdult.textContent++;
+  } else if (target.classList.contains("adult")) {
     target.classList.remove("adult");
-    totalPax.textContent = parseInt(totalPax.textContent) - 1;
-    totalAdult.textContent = parseInt(totalAdult.textContent) - 1;
+    totalPax.textContent--;
+    totalAdult.textContent--;
   }
-
-  if (!target.classList.contains("half") && event.altKey) {
+  if (!target.classList.contains("half") && !target.classList.contains("adult") && evt.altKey === true) {
     target.classList.add("half");
-    totalPax.textContent = parseInt(totalPax.textContent) + 1;
-    totalHalf.textContent = parseInt(totalHalf.textContent) + 1;
-  } else if (target.classList.contains("half") && event.altKey) {
+    totalPax.textContent++;
+    totalHalf.textContent++;
+  } else if (target.classList.contains("half")) {
     target.classList.remove("half");
-    totalPax.textContent = parseInt(totalPax.textContent) - 1;
-    totalHalf.textContent = parseInt(totalHalf.textContent) - 1;
+    totalPax.textContent--;
+    totalHalf.textContent--;
   }
 }
+
 
 // Создание элемента с атрибутами и содержимым
 function elRender(tagName, attrs, childs) {
