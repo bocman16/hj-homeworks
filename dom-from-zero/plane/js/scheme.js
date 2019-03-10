@@ -136,6 +136,7 @@ function checkedAllSeat(type) {
 
   Array.from(seatList).forEach(item => {
     if (!item.classList.contains("adult") && type === "add") {
+      item.classList.remove("adult", "half");
       item.classList.add("adult");
     } else if (
       (item.classList.contains("adult") || item.classList.contains("half")) &&
