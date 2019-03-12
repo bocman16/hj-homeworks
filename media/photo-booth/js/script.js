@@ -99,14 +99,14 @@ function processingIcon(evt) {
   if (evt.target.textContent === "file_download") {
     evt.target.style.display = "none";
   } else if (evt.target.textContent === "file_upload") {
-    fetchRequest(dataUrl, evt.target);
+    fetchRequest(evt.target);
   } else if (evt.target.textContent === "delete") {
     listImages.removeChild(figure);
   }
 }
 
 //отправка запроса
-function fetchRequest(imgData, target) {
+function fetchRequest(target) {
   
   canvas.toBlob(blob => {
     const data = new FormData();
