@@ -20,6 +20,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     .getUserMedia({ video: true, audio: false })
     .then(stream => {
       video.srcObject = stream;
+
       controls.style.display = "flex";
 
       video.addEventListener("canplay", evt => {
@@ -28,7 +29,9 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
         btnTakePhoto.addEventListener("click", () => {
           ctx.drawImage(video, 0, 0);
+
           image.src = canvas.toDataURL();
+
           createCard();
         });
       });
@@ -45,7 +48,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 }
 
 //создаем схему фото
-
 function createCard() {
   const figure = document.createElement("figure"),
     img = document.createElement("img"),
@@ -56,11 +58,11 @@ function createCard() {
     cloneUploadI = i.cloneNode(true),
     CloneDelete = a.cloneNode(true),
     CloneDeleteI = i.cloneNode(true);
-  //////
+
   listImages.prepend(figure);
   figure.appendChild(img);
   img.src = image.src;
-  ////////
+
   figure.appendChild(figcaption);
   figcaption.appendChild(a);
   a.href = image.src;
@@ -69,12 +71,12 @@ function createCard() {
   a.appendChild(i);
   i.className = "material-icons";
   i.textContent = "file_download";
-  ///////
+
   figcaption.appendChild(cloneUpload);
   cloneUpload.appendChild(cloneUploadI);
   cloneUploadI.className = "material-icons";
   cloneUploadI.textContent = "file_upload";
-  //////
+
   figcaption.appendChild(CloneDelete);
   CloneDelete.appendChild(CloneDeleteI);
   CloneDeleteI.className = "material-icons";
@@ -87,46 +89,35 @@ function createCard() {
   materialIcons.forEach(icon => {
     icon.addEventListener("click", processingIcon);
   });
-};
+}
 
-
+//Кликаем на иконки
 function processingIcon(evt) {
   const figure = document.querySelector("figure");
   const dataUrl = canvas.toDataURL();
 
-    if (evt.target.textContent === "file_download") {
-        evt.target.style.display = "none";
-    } else if (evt.target.textContent === "file_upload") {
-      fetchRequest(dataUrl, evt.target);
-    } else if (evt.target.textContent === "delete") {
-        listImages.removeChild(figure);
-    }
-}
-
-function fetchRequest(imgData, target) {
-    const data = new FormData();
-    const blob = dataUriToBlob(imgData);
-    data.append('image', blob);
-  
-    fetch('https://neto-api.herokuapp.com/photo-booth', {
-      body: data,
-      credentials: 'same-origin',
-      method: 'POST'
-    })  .then(result => {
-        console.log(result);
-        target.style.display = 'none';
-      });
-}
-
-
-function dataUriToBlob(dataURI) {
-    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    const array = [];
-    const byteString = atob(dataURI.split(',')[1]);
-  
-    for(let i = 0; i < byteString.length; i++) {
-      array.push(byteString.charCodeAt(i));
-    }
-  
-    return new Blob([new Uint8Array(array)], { type: mimeString });
+  if (evt.target.textContent === "file_download") {
+    evt.target.style.display = "none";
+  } else if (evt.target.textContent === "file_upload") {
+    fetchRequest(dataUrl, evt.target);
+  } else if (evt.target.textContent === "delete") {
+    listImages.removeChild(figure);
   }
+}
+
+//отправка запроса
+function fetchRequest(imgData, target) {
+  
+  canvas.toBlob(blob => {
+    const data = new FormData();
+    data.append("image", blob);
+
+    fetch("https://neto-api.herokuapp.com/photo-booth", {
+      body: data,
+      method: "POST"
+    }).then(result => {
+      console.log(result);
+      target.style.display = "none";
+    });
+  });
+}
