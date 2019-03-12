@@ -44,7 +44,7 @@ function record(app) {
     navigator.mediaDevices
       .getUserMedia(app.config)
       .then((stream) => {
-        app.preview.src = URL.createObjectURL(stream); 
+        app.preview.srcObject = stream;
         app.mode = 'recording';
 
         let recorder = new MediaRecorder(stream);
@@ -55,7 +55,6 @@ function record(app) {
           const recorded = new Blob(chunks, {'type': recorder.mimeType}); 
           chunks = null; 
 
-          
           app.preview.srcObject = null;
           stream.getTracks().forEach(track => track.stop());
           recorder = stream = null;
@@ -66,18 +65,15 @@ function record(app) {
               done({video: recorded, frame: frame});
             });
         });
-
         recorder.start(1000);
 
         setTimeout(() => {
           recorder.stop(); 
         }, app.limit);
-
+        
       })
-
       .catch((err) => {
         fail(`Не удалось записать видео, ошибка: ${err.name}: ${err.message} \n ${err.stack}`);
       });
-
   });
 }
