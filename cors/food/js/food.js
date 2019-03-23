@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable no-plusplus */
 
 
@@ -38,7 +37,7 @@ function randName() {
 
 function loadData(url) {
   const functionName = randName();
-  return new Promise((done, fail) => {
+  return new Promise((done) => {
     window[functionName] = done;
     const script = document.createElement('script');
     script.src = `${url}?jsonp=${functionName}`;
