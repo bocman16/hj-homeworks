@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 const throttle = (handler, ms) => {
   let timeout;
   return () => {
@@ -19,12 +20,29 @@ class TextEditor {
   registerEvents() {
     const save = throttle(this.save.bind(this), 1000);
     this.contentContainer.addEventListener('input', save);
+    this.contentContainer.addEventListener('drop', event => this.loadFile.call(this, event));
+    this.contentContainer.addEventListener('dragover', event => this.showHint.call(this, event));
   }
 
   loadFile(e) {
+    e.preventDefault();
+    this.hideHint();
+    const files = Array.from(e.dataTransfer.files);
+    if (files[0].type === 'text/plain') {
+      this.readFile(files[0]);
+      this.setFilename(files[0].name);
+    } else {
+      console.log('не .txt');
+    }
   }
 
   readFile(file) {
+    const reader = new FileReader();
+    this.contentContainer.value = '';
+    reader.addEventListener('load', (event) => {
+      this.contentContainer.value = event.target.result;
+    });
+    reader.readAsText(file);
   }
 
   setFilename(filename) {
@@ -32,9 +50,12 @@ class TextEditor {
   }
 
   showHint(e) {
+    e.preventDefault();
+    this.hintContainer.classList.add('text-editor__hint_visible');
   }
 
   hideHint() {
+    this.hintContainer.classList.remove('text-editor__hint_visible');
   }
 
   load(value) {
